@@ -13,6 +13,9 @@ const Info = new Schema({
         type:String,
         required:true
         
+    },
+    ProfilePic:{
+        type:Object,
     }
 });
 

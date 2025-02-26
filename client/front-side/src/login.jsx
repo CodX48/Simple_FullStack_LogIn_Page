@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom"
-import { GetUser } from "./APIs/Login";
+import { LoginUser } from "./APIs/Login";
 
 
 const inputStyle = "p-2 font-semibold outline-none border-none rounded-md";
@@ -11,10 +11,10 @@ export function Loginpage(){
 
     const HandleLogin = async (e)=>{
         e.preventDefault();
-        const Respose = await GetUser(User);
+        const Respose = await LoginUser(User);
         alert(Respose);
         setUser({Gmail:"", Password:""});
-        console.log(User);
+        //console.log(User);
     }
 
     return(

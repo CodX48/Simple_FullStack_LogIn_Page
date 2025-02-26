@@ -14,7 +14,12 @@ app.use(json())
 app.use(cors(["http://http://localhost:5173/", "http://localhost:5173/login"]))
 app.post("/register", async (req, res) => {
     try {
-        const { FullName, Gmail, Password } = req.body;
+        const { FullName, Gmail, Password, ProfilePic } = req.body;
+
+        const user = await mongo.findOne({Gmail:Gmail});
+        if (user){
+            return res.send("can't use this name or gmail");
+        }
 
         if (!FullName || !Gmail || !Password) {
             return res.status(400).send("All Data Required");
@@ -23,7 +28,8 @@ app.post("/register", async (req, res) => {
         const data = new mongo({
             FullName,
             Gmail,
-            Password: hashedPassword
+            Password: hashedPassword,
+            ProfilePic,
         });
 
         await data.save(); 
@@ -42,11 +48,28 @@ app.post("/login", async (req,res)=>{
     
     if(Checkpass){
         res.send(`Welcome ${user.FullName}`);
+        console.log(user)
     }else{
         res.send("Wrong Information");
         
     }
-    })
+    });
+    app.get("/user/:UserName", async (req, res) => {
+        try {
+            const userName = req.params.UserName;
+            const user = await mongo.findOne({ FullName: userName });
+    
+            if (user) {
+                res.send({ Message: user });
+            } else {
+                res.status(404).send({ Message: "User not found" });
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({Message: "Internal Server Error"});
+        }
+    });
+    
 
 app.listen(5000,()=>{
     console.log("Connected to the server !!");
